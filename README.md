@@ -70,6 +70,6 @@ O sistema simula o núcleo de um **E-commerce/Blog**, integrando a gestão de pr
 ## 👨‍💻 Autor
 **Kaio**
 *Estudante de Desenvolvimento de Software focado em Python e Backend.*
-*Objetivo: Construção de arquiteturas sólidas e integração com ferramentas de IA (Cursor/FastAPI).*
+*Objetivo: Construção de arquiteturas sólidas e integração com ferramentas de IA (Cursor/FastAPI)*
 
 ---
