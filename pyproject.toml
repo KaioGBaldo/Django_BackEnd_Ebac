@@ -12,7 +12,7 @@ dependencies = [
     "djangorestframework (>=3.17.1,<4.0.0)",
     "httpx (>=0.28.1,<0.29.0)"
 ]
-
+package-mode = false  # <--- ADICIONE ESTA LINHA
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
