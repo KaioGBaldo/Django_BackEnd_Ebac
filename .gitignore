@@ -1,0 +1,30 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Banco de Dados Local (Não envie para o GitHub para evitar conflitos)
+*.sqlite3
+
+# Ambientes Virtuais e Dependências
+.venv/
+env/
+venv/
+ENV/
+
+# Poetry
+# O pyproject.toml e poetry.lock DEVEM ser enviados, 
+# mas a pasta de cache do poetry não.
+.poetry/
+
+# Logs e arquivos de sistema
+*.log
+.DS_Store
+Thumbs.db
+
+# Configurações do VS Code ou Cursor
+.vscode/
+.cursor/
+
+# Arquivos de ambiente/segredo (Onde ficam as chaves da API)
+.env
