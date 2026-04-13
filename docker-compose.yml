@@ -10,7 +10,7 @@ services:
       - POSTGRES_USER=kaio
       - POSTGRES_PASSWORD=suasenha
     networks:
-      - main
+      - bookstore_network  # Conecta o banco à rede
 
   web:
     build: .
@@ -30,10 +30,12 @@ services:
     depends_on:
       - db
     networks:
-      - main
+      - bookstore_network  # Conecta a aplicação à mesma rede
 
+# --- ESTA É A PARTE QUE O PROFESSOR PEDIU ---
 networks:
-  main:
+  bookstore_network:
+    driver: bridge
 
 volumes:
   postgres_data:
