@@ -33,7 +33,6 @@ jobs:
         with:
           python-version: "3.12"
 
-      # Correção 1: Instalar dependências do sistema para o Postgres
       - name: Install system dependencies
         run: |
           sudo apt-get update
@@ -55,8 +54,7 @@ jobs:
           POSTGRES_PASSWORD: suasenha
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
-          # Adicione esta linha para o Django não reclamar de Hosts não permitidos no CI
-          DJANGO_SETTINGS_MODULE: setup_django.settings 
+          DJANGO_SETTINGS_MODULE: setup_django.settings
         run: |
           poetry run python manage.py migrate
           poetry run python manage.py test
