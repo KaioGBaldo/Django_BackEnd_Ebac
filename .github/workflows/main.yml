@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      # Criamos um serviço de banco de dados para os testes
       db:
         image: postgres:15
         env:
@@ -19,8 +18,7 @@ jobs:
           POSTGRES_USER: kaio
           POSTGRES_PASSWORD: suasenha
         ports:
-          - 5432: 5432
-        # Aguarda o banco estar pronto
+          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -35,31 +33,30 @@ jobs:
         with:
           python-version: "3.12"
 
+      # Correção 1: Instalar dependências do sistema para o Postgres
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpq-dev gcc
+
       - name: Install Poetry
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
-          export PATH="$HOME/.local/bin:$PATH"
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Install Dependencies
         run: |
           poetry install --no-interaction --no-root
 
-      - name: Run Migrations
+      - name: Run Migrations and Tests
         env:
           POSTGRES_NAME: bookstore
           POSTGRES_USER: kaio
           POSTGRES_PASSWORD: suasenha
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
+          # Adicione esta linha para o Django não reclamar de Hosts não permitidos no CI
+          DJANGO_SETTINGS_MODULE: setup_django.settings 
         run: |
           poetry run python manage.py migrate
-
-      - name: Run Tests
-        env:
-          POSTGRES_NAME: bookstore
-          POSTGRES_USER: kaio
-          POSTGRES_PASSWORD: suasenha
-          POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
-        run: |
           poetry run python manage.py test
