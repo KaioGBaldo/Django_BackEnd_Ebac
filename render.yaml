@@ -1,0 +1,23 @@
+services:
+  # O Banco de Dados Postgres
+  - type: db
+    name: bookstore_db
+    ipAllowList: [] # Permite conexões apenas dos seus serviços
+    databaseName: bookstore
+    user: kaio
+
+  # A sua aplicação Django
+  - type: web
+    name: bookstore_api
+    env: docker
+    plan: free
+    region: ohio
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: bookstore_db
+          property: connectionString
+      - key: DJANGO_SETTINGS_MODULE
+        value: setup_django.settings
+      - key: SECRET_KEY
+        generateValue: true
