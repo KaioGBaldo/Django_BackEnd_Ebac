@@ -1,7 +1,7 @@
 import asyncio
 from django.http import HttpResponse
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Product, Category, Post, Order
 from .serializers import ProductSerializer, CategorySerializer, PostSerializer, OrderSerializer
 
@@ -15,7 +15,7 @@ async def async_view_example(request):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all().order_by('id')
     serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()

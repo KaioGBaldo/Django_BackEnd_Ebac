@@ -1,8 +1,23 @@
-version: '3.8'
-
 services:
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=bookstore
+      - POSTGRES_USER=kaio
+      - POSTGRES_PASSWORD=suasenha
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kaio -d bookstore"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bookstore_network
+
   web:
     build: .
+    # O comando agora aguarda o banco estar saudável
     command: >
       sh -c "python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
@@ -11,4 +26,20 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DEBUG=1
+      - POSTGRES_NAME=bookstore
+      - POSTGRES_USER=kaio
+      - POSTGRES_PASSWORD=suasenha
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - bookstore_network
+
+networks:
+  bookstore_network:
+    driver: bridge
+
+volumes:
+  postgres_data:

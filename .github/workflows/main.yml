@@ -1,0 +1,60 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main", "feature/*" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:15
+        env:
+          POSTGRES_DB: bookstore
+          POSTGRES_USER: kaio
+          POSTGRES_PASSWORD: suasenha
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpq-dev gcc
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install Dependencies
+        run: |
+          poetry install --no-interaction --no-root
+
+      - name: Run Migrations and Tests
+        env:
+          POSTGRES_NAME: bookstore
+          POSTGRES_USER: kaio
+          POSTGRES_PASSWORD: suasenha
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+          DJANGO_SETTINGS_MODULE: setup_django.settings
+        run: |
+          poetry run python manage.py migrate
+          poetry run python manage.py test
