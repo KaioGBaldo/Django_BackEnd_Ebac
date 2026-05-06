@@ -1,6 +1,7 @@
 services:
   db:
     image: postgres:15
+    container_name: db_bookstore  # Nome fixo para facilitar a resolução interna
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
@@ -11,15 +12,17 @@ services:
       test: ["CMD-SHELL", "pg_isready -U kaio -d bookstore"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10         # Aumentado para dar mais fôlego ao banco
+      start_period: 10s   # IMPORTANTE: Dá 10s para o banco ligar antes de começar a testar
     networks:
       - bookstore_network
 
   web:
     build: .
-    # O comando agora aguarda o banco estar saudável
+    # Adicionamos um pequeno 'sleep' para garantir que a rede Docker resolveu o DNS
     command: >
-      sh -c "python manage.py migrate &&
+      sh -c "sleep 2 && 
+             python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
@@ -31,6 +34,7 @@ services:
       - POSTGRES_PASSWORD=suasenha
       - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
+      - PYTHONUNBUFFERED=1 # Garante que os logs apareçam em tempo real
     depends_on:
       db:
         condition: service_healthy
